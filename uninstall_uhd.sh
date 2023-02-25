@@ -161,21 +161,23 @@ if [ ! -f "uhd_install_output.txt" ]; then
     exit 1
 fi
 
-echo "uhd_install_output.txt file exists, delete any files missed"
-
 # Read the uhd_install_output.txt file and extract the installed files
-installed_files=$(grep -E 'Installing:\s+(/.+)' uhd_install_output.txt | sed 's/Installing:\s*//')
+installed_files=$(grep -oE 'Installing: (/[^[:space:]]+)+' uhd_install_output.txt | cut -d ' ' -f 2)
 
 # Iterate over the installed files, check if each file exists, delete it if it does, and notify the user
 for file in $installed_files; do
-    if [ -e $file ]; then
-        sudo rm $file
+    if [ -e $file ] && [ -w $file ]; then
+        sudo rm -rf $file
+        echo "$file deleted"
+    elif [ -e $file ] && [ ! -w $file ]; then
+        echo "$file is read-only, changing permission"
+        sudo chmod 777 $file
+        echo "Trying using root, password enter if output stops"
+        sudo su -c "rm -rf $file"
         echo "$file deleted"
     else
         echo "$file does not exist"
     fi
 done
-
-
 
 }  |& tee -a >(while read line; do echo "$(date "+%Y-%m-%d %H:%M:%S") $line"; done > uhd_uninstall_output.txt)

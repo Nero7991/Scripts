@@ -69,4 +69,4 @@ sudo make install
 uhd_images_downloader
 
 sudo apt update
-} |& tee -a uhd_install_output.txt
+} |& tee -a >(while read line; do echo "$(date "+%Y-%m-%d %H:%M:%S") $line"; done > uhd_install_output.txt)

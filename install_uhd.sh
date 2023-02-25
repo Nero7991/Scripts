@@ -1,6 +1,14 @@
 #!/bin/bash
 
 {
+# delete the log file if exists
+if [ -f "uhd_install_output.txt" ]; then
+    rm "uhd_install_output.txt"
+    echo "Deleted uhd_install_output.txt"
+else
+    echo "uhd_install_output.txt not found"
+fi
+
 # set the GitHub repository URL
 REPO_URL="https://api.github.com/repos/ettusresearch/uhd/tags"
 

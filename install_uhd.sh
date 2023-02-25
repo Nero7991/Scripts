@@ -72,10 +72,10 @@ cd /usr/local/src/uhd/
 sudo git checkout $UHD_COMMIT
 
 # Get the current Git repository tag
-TAG=$(git describe --tags --abbrev=0)
+TAG=$(sudo git describe --tags --abbrev=0)
 
 # Get the current Git repository commit
-COMMIT=$(git rev-parse --short HEAD)
+COMMIT=$(sudo git rev-parse --short HEAD)
 
 # Print the tag and commit
 echo "Tag: $TAG"
@@ -90,7 +90,7 @@ cd /usr/local/src/uhd/host/build
 sudo cmake .. -DENABLE_PYTHON3=ON -DUHD_RELEASE_MODE=release -DCMAKE_INSTALL_PREFIX=/usr
 sudo make -j $(nproc)
 sudo make install
-uhd_images_downloader
+sudo uhd_images_downloader
 
 sudo apt update
 } |& tee -a >(while read line; do echo "$(date "+%Y-%m-%d %H:%M:%S") $line"; done > uhd_install_output.txt)

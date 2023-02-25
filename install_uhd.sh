@@ -58,9 +58,33 @@ sudo apt-get -y install -q \
 
 sudo rm -rf /var/lib/apt/lists/*
 
+if [ -d "/usr/local/src/uhd" ]; then
+  sudo rm -r "/usr/local/src/uhd"
+  echo "Folder 'uhd' deleted"
+else
+  echo "Folder 'uhd' not found"
+fi
+
+
 sudo mkdir -p /usr/local/src
 sudo git clone https://github.com/EttusResearch/uhd.git /usr/local/src/uhd
-cd /usr/local/src/uhd/ && git checkout $UHD_COMMIT
+cd /usr/local/src/uhd/ 
+sudo git checkout $UHD_COMMIT
+
+# Get the current Git repository tag
+TAG=$(git describe --tags --abbrev=0)
+
+# Get the current Git repository commit
+COMMIT=$(git rev-parse --short HEAD)
+
+# Print the tag and commit
+echo "Tag: $TAG"
+echo "Commit: $COMMIT"
+echo "Waiting 5 seconds... Exit (Ctrl-C) if not the correct UHD version to be installed"
+
+# Wait for 5 seconds
+sleep 5
+
 sudo mkdir -p /usr/local/src/uhd/host/build
 cd /usr/local/src/uhd/host/build
 sudo cmake .. -DENABLE_PYTHON3=ON -DUHD_RELEASE_MODE=release -DCMAKE_INSTALL_PREFIX=/usr

@@ -2,16 +2,18 @@
 
 {
 # set the GitHub repository URL
-REPO_URL="https://api.github.com/repos/ettus/uhd/tags"
+REPO_URL="https://api.github.com/repos/ettusresearch/uhd/tags"
 
 # fetch the tags and store them in a temporary file
-curl -s $REPO_URL | grep '"name"' | head -n 20 | cut -d '"' -f 4 > /tmp/tags.txt
+curl -s $REPO_URL | grep '"name"' | cut -d '"' -f 4 > /tmp/tags.txt
 
 # prompt the user to select a tag
 echo "Please select a tag from the following list:"
 select TAG in $(cat /tmp/tags.txt); do
   # set the UHD_COMMIT variable to the selected tag
-  export UHD_COMMIT=$TAG
+  echo "Selected tag: $TAG"
+  export UHD_COMMIT=$(curl -s https://api.github.com/repos/ettusresearch/uhd/git/refs/tags/$TAG | grep '"sha"' | cut -d '"' -f 4)
+  echo "Commit hash: $UHD_COMMIT"
   break
 done
 

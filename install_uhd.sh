@@ -8,12 +8,10 @@ if [ -f "uhd_install_output.txt" ]; then
 else
     echo "uhd_install_output.txt not found"
 fi
-} |& tee -a >(while read line; do echo "$(date "+%Y-%m-%d %H:%M:%S") $line"; done > uhd_install_output.txt)
 
 # set the GitHub repository URL
 REPO_URL="https://api.github.com/repos/ettusresearch/uhd/tags"
 
-{
 # fetch the tags and store them in a temporary file
 curl -s $REPO_URL | grep '"name"' | cut -d '"' -f 4 > /tmp/tags.txt
 
@@ -26,7 +24,6 @@ select TAG in $(cat /tmp/tags.txt); do
   echo "Commit hash: $UHD_COMMIT"
   break
 done
-} |& tee -a >(while read line; do echo "$(date "+%Y-%m-%d %H:%M:%S") $line"; done > uhd_install_output.txt)
 
 # clean up the temporary file
 rm /tmp/tags.txt
@@ -41,7 +38,7 @@ rm /tmp/tags.txt
 
 #3.15.0.0
 #export UHD_COMMIT=aea0e2d
-{
+
 # Install security updates and required packages
 sudo apt-get update
 sudo apt-get -y install -q \
@@ -52,9 +49,7 @@ sudo apt-get -y install -q \
     python3-pip \
     curl \
     gnome-terminal
-} |& tee -a >(while read line; do echo "$(date "+%Y-%m-%d %H:%M:%S") $line"; done > uhd_install_output.txt)
 
-{
 # Install UHD dependencies
 sudo apt-get -y install -q \
     libboost-all-dev \
@@ -68,9 +63,7 @@ sudo apt-get -y install -q \
     python3-numpy \
     dpdk \
     libdpdk-dev
- } |& tee -a >(while read line; do echo "$(date "+%Y-%m-%d %H:%M:%S") $line"; done > uhd_install_output.txt)
- 
-{
+
 sudo rm -rf /var/lib/apt/lists/*
 
 if [ -d "/usr/local/src/uhd" ]; then
@@ -79,22 +72,19 @@ if [ -d "/usr/local/src/uhd" ]; then
 else
   echo "Folder 'uhd' not found"
 fi
-} |& tee -a >(while read line; do echo "$(date "+%Y-%m-%d %H:%M:%S") $line"; done > uhd_install_output.txt)
 
-{
+
 sudo mkdir -p /usr/local/src
 sudo git clone https://github.com/EttusResearch/uhd.git /usr/local/src/uhd
 cd /usr/local/src/uhd/ 
 sudo git checkout $UHD_COMMIT
-} |& tee -a >(while read line; do echo "$(date "+%Y-%m-%d %H:%M:%S") $line"; done > uhd_install_output.txt)
-
 
 # Get the current Git repository tag
 TAG=$(sudo git describe --tags --abbrev=0)
 
 # Get the current Git repository commit
 COMMIT=$(sudo git rev-parse --short HEAD)
-{
+
 # Print the tag and commit
 echo "Tag: $TAG"
 echo "Commit: $COMMIT"
@@ -107,13 +97,8 @@ sudo mkdir -p /usr/local/src/uhd/host/build
 cd /usr/local/src/uhd/host/build
 sudo cmake .. -DENABLE_PYTHON3=ON -DUHD_RELEASE_MODE=release -DCMAKE_INSTALL_PREFIX=/usr
 sudo make -j $(nproc)
-} |& tee -a >(while read line; do echo "$(date "+%Y-%m-%d %H:%M:%S") $line"; done > uhd_install_output.txt)
-
-{
 sudo make install
-} |& tee -a >(while read line; do echo "$(date "+%Y-%m-%d %H:%M:%S") $line"; done > uhd_install_output.txt)
-
-{
 sudo uhd_images_downloader
+
 sudo apt update
 } |& tee -a >(while read line; do echo "$(date "+%Y-%m-%d %H:%M:%S") $line"; done > uhd_install_output.txt)

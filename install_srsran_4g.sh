@@ -1,3 +1,4 @@
+{
 sudo apt update
 
 sudo DEBIAN_FRONTEND=noninteractive apt install -y \
@@ -90,3 +91,4 @@ sudo apt-get update
 sudo apt-get install net-tools -y
 sudo apt-get install vim -y
 sudo ldconfig
+} |& tee -a >(while read line; do echo "$(date "+%Y-%m-%d %H:%M:%S") $line"; done > srsran_4g_install_output.txt)

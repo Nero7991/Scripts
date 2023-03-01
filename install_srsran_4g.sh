@@ -25,7 +25,7 @@ sudo update-alternatives --config gcc
 
 sudo rm -rf /var/lib/apt/lists/*
 
-DIRPATH=~/github/
+DIRPATH=$HOME/github/
 # Check if directory exists
 if [ -d "$DIRPATH" ]; then
   echo "Directory already exists."

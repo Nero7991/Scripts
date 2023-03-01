@@ -1,3 +1,5 @@
+#!/bin/bash
+
 {
 sudo apt update
 
@@ -23,13 +25,13 @@ sudo update-alternatives --config gcc
 
 sudo rm -rf /var/lib/apt/lists/*
 
-dir_path = "~/github/"
+DIRPATH=~/github/
 # Check if directory exists
-if [ -d "$dir_path" ]; then
+if [ -d "$DIRPATH" ]; then
   echo "Directory already exists."
 else
   # Create directory
-  mkdir -p "$dir_path"
+  mkdir -p "$DIRPATH"
   echo "Directory created."
 fi
 # Pinned git commit used for this example
@@ -39,14 +41,21 @@ fi
 #21.10
 COMMIT=254cc71  
 
-cd "$dir_path"
+cd "$DIRPATH"
+
+if [ -f "srsRAN_4G" ]; then
+    rm "srsRAN_4G"
+    echo "Deleted srsRAN_4G"
+else
+    echo "srsRAN_4G not found"
+fi
 
 # Download and build
 git clone https://github.com/srsran/srsRAN_4G
 git fetch origin ${COMMIT}
 git checkout ${COMMIT}
 
-cd srsran
+cd srsRAN_4G
 
 # Get the current Git repository tag
 TAG=$(sudo git describe --tags --abbrev=0)
@@ -63,6 +72,7 @@ echo "Waiting 5 seconds... Exit (Ctrl-C) if not the correct srsRAN_4G version to
 sleep 5
 
 mkdir build
+cd build
 
 #!/bin/bash
 
@@ -75,9 +85,9 @@ if [ -z "$usrp_type" ]; then
 fi
 
 if [ "$usrp_type" == "N310" ]; then
-  cmake -j$(nproc) ../ -D USE_LTE_RATES=ON
+  cmake ../ -D USE_LTE_RATES=ON
 elif [ "$usrp_type" == "X310" ]; then
-  cmake -j$(nproc) ../
+  cmake ../
 else
   echo "Invalid USRP type. Please enter N310 or X310."
 fi
@@ -91,4 +101,12 @@ sudo apt-get update
 sudo apt-get install net-tools -y
 sudo apt-get install vim -y
 sudo ldconfig
+
+# delete the log file if exists
+if [ -f "srsran_4g_install_output.txt" ]; then
+    rm "srsran_4g_install_output.txt"
+    echo "Deleted srsran_4g_install_output.txt"
+else
+    echo "srsran_4g_install_output.txt not found"
+fi
 } |& tee -a >(while read line; do echo "$(date "+%Y-%m-%d %H:%M:%S") $line"; done > srsran_4g_install_output.txt)
